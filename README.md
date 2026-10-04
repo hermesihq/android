@@ -35,7 +35,7 @@ dependencyResolutionManagement {
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("com.github.hermesihq.android:hermesi-push:0.1.0")
+    implementation("com.github.hermesihq:android:0.1.0")
 }
 ```
 
