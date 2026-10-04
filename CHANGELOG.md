@@ -5,7 +5,7 @@ All notable changes to Hermesi Push for Android. This file describes what a cons
 **`0.x` means the public API can still change.** A minor bump may contain a breaking change; a patch bump will
 not. Each release lists breaking changes first.
 
-## 0.1.0 (unreleased)
+## 0.1.0 (2026-10-04)
 
 First release.
 
