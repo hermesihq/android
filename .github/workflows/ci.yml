@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  library:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      # Unit tests on the JVM under Robolectric, with no emulator: the HTTP calls, the token
+      # rotation rules, what is drawn and what a tap opens.
+      - run: ./gradlew :hermesi-push:testDebugUnitTest
+      # Lint, and the release artifact a consumer would actually depend on: an AAR whose manifest
+      # and POM are what get merged into an app.
+      - run: ./gradlew :hermesi-push:lintDebug :hermesi-push:assembleRelease
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: reports
+          path: hermesi-push/build/reports
