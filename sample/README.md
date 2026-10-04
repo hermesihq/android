@@ -67,6 +67,8 @@ curl -X POST http://localhost:8010/v1/events \
 
 - **App in the background**: Firebase draws the notification. Tap it: the app opens and the screen prints the link.
 - **App open**: Firebase draws nothing, and the SDK draws one. Tap it: same.
+- **A picture**: give the template's push tab an image URL (`https`, JPEG or PNG). The notification shows it, in the background
+  (Firebase) and with the app open (the SDK). Point it at a URL that does not exist: the notification still arrives, as text.
 - **A link the app did not allow** (for example `file://...` or `javascript:...`) is dropped, not opened. The sample allows
   `http`, `https` and `sample`.
 - **Unregister**, then send again: nothing arrives. **Register** again: it does.

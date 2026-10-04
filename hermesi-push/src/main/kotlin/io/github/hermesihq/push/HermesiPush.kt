@@ -25,6 +25,9 @@ import org.json.JSONObject
  * open. `http` and `https` are always allowed; nothing else is.
  * @property showInForeground Whether to draw a notification when one arrives while the app is open. Firebase draws
  * none itself in that case.
+ * @property showImages Whether a notification drawn while the app is open shows its picture, which means downloading it
+ * (`https` only, at most 5 MB, a few seconds). Firebase shows the picture of a notification it draws itself, whatever
+ * this says.
  */
 public class HermesiPushOptions(
     public val defaultChannelId: String = "hermesi_default",
@@ -32,6 +35,7 @@ public class HermesiPushOptions(
     public val smallIcon: Int? = null,
     public val deepLinkSchemes: Set<String> = emptySet(),
     public val showInForeground: Boolean = true,
+    public val showImages: Boolean = true,
 )
 
 /**
@@ -148,13 +152,17 @@ public object HermesiPush {
 
     internal fun handleMessage(message: RemoteMessage): Boolean {
         val notification = message.notification ?: return false
-        return showInForeground(PushContent(notification.title, notification.body, message.data), notification.channelId)
+        return showInForeground(
+            PushContent(notification.title, notification.body, message.data),
+            notification.channelId,
+            notification.imageUrl?.toString(),
+        )
     }
 
-    internal fun showInForeground(content: PushContent, channelId: String?): Boolean {
+    internal fun showInForeground(content: PushContent, channelId: String?, imageUrl: String? = null): Boolean {
         val current = state ?: return false
         if (!current.options.showInForeground) return false
-        HermesiNotifications.show(current.context, current.options, content, channelId)
+        HermesiNotifications.show(current.context, current.options, content, channelId, imageUrl)
         return true
     }
 
