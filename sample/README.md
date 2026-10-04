@@ -72,8 +72,12 @@ curl -X POST http://localhost:8010/v1/events \
 - **A link the app did not allow** (for example `file://...` or `javascript:...`) is dropped, not opened. The sample allows
   `http`, `https` and `sample`.
 - **Unregister**, then send again: nothing arrives. **Register** again: it does.
-- **Token rotation**: clearing the app's data, or reinstalling, gives the device a new Firebase token. Register again and
-  look at the subscriber in Hermesi: one device, not two stale ones.
+- **Token rotation**: clearing the app's data, or reinstalling, gives the device a new Firebase token and makes the app forget
+  the old one, so it cannot retire it. Register again and the subscriber has **two** devices for now. Send a notification:
+  it arrives on the new one, Firebase answers that the old token is no longer registered, and Hermesi marks it `invalid`
+  (reason `provider: UNREGISTERED`) and never sends to it again. The one failed message in the Activity Log is that old
+  token, once. A token that rotates while the app keeps its data (Firebase's own refresh) is replaced in one step: the app
+  registers the new one, then retires the old.
 
 If something fails, the screen shows the error code. `invalid_device_registration` and `unknown_device_transport` mean Hermesi
 refused what the app sent; an `IOException` means a URL above is wrong or something is not running.
