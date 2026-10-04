@@ -7,6 +7,8 @@ firebaseMessaging = "24.1.0"
 junit = "4.13.2"
 mockwebserver = "4.12.0"
 orgJson = "20240303"
+firebaseBom = "33.7.0"
+googleServices = "4.4.2"
 robolectric = "4.14.1"
 androidxTestCore = "1.6.1"
 
@@ -14,6 +16,7 @@ androidxTestCore = "1.6.1"
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }
 junit = { module = "junit:junit", version.ref = "junit" }
 mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
@@ -23,4 +26,6 @@ org-json = { module = "org.json:json", version.ref = "orgJson" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

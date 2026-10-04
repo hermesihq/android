@@ -6,3 +6,4 @@ local.properties
 .DS_Store
 *.log
 .kotlin/
+sample/google-services.json

@@ -27,7 +27,7 @@ internal object HermesiNotifications {
         val channel = channelId?.takeIf { it.isNotEmpty() && channelExists(context, it) } ?: ensureDefaultChannel(context, options)
 
         val builder = NotificationCompat.Builder(context, channel)
-            .setSmallIcon(options.smallIcon ?: context.applicationInfo.icon)
+            .setSmallIcon(smallIcon(context, options))
             .setContentTitle(content.title)
             .setContentText(content.body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(content.body))
@@ -38,6 +38,13 @@ internal object HermesiNotifications {
         @Suppress("MissingPermission") // checked above through notificationsAllowed
         manager.notify(System.currentTimeMillis().toInt(), builder.build())
     }
+
+    /**
+     * The status bar icon. The app's own icon when the app set none, and a system one when it has no icon either: a
+     * notification with no valid small icon is rejected by the system, which would drop it without a word.
+     */
+    internal fun smallIcon(context: Context, options: HermesiPushOptions): Int =
+        options.smallIcon ?: context.applicationInfo.icon.takeIf { it != 0 } ?: android.R.drawable.ic_dialog_info
 
     private fun tapIntent(context: Context, content: PushContent, options: HermesiPushOptions): PendingIntent? {
         val link = content.actionUrl(options.deepLinkSchemes)
