@@ -54,6 +54,8 @@ dependencies {
     compileOnly(libs.firebase.messaging)
 
     testImplementation(libs.junit)
+    // The tests build a Firebase RemoteMessage, which the library itself only compiles against.
+    testImplementation(libs.firebase.messaging)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.kotlinx.coroutines.test)

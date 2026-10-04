@@ -6,6 +6,7 @@ registered with Hermesi as it changes, and draws a notification when one arrives
 
 - Registers and unregisters the device, and keeps it registered when Firebase rotates the token.
 - Shows notifications that arrive in the foreground, with the right channel and a safe tap target.
+- Shows a notification's picture, downloaded within strict limits.
 - No HTTP library, no JSON library, and no Firebase version of its own: it uses the one your app has.
 
 Android 6.0 (API 23) and later. Kotlin, with `suspend` functions.
@@ -147,10 +148,23 @@ provider that can reach the device, and an app that overrode it would send its d
 - Both are thrown from `register()` and `unregister()`. A token refresh in the background handles its own failures:
   if it cannot register the new token it logs and leaves it to the next `register()`.
 
+## Pictures
+
+A notification's picture (the template's image URL) is shown in both cases:
+
+- **App in the background**: Firebase downloads and shows it itself.
+- **App open**: the SDK downloads it and draws the notification with a large picture (`BigPictureStyle`). The picture
+  comes from a template, not from your app, and is fetched on the person's phone, so the download is strict: **`https` only**
+  (a redirect is followed only to another `https` address, at most three times), **at most 5 MB** (refused from `Content-Length`
+  before it is read, and cut off while it arrives if the server did not say), decoded at a size a notification can use rather
+  than at full resolution, and abandoned after a few seconds. The download runs on the thread Firebase delivers the message on.
+  If it fails for any reason the notification is still shown, as text. Set `showImages = false` in `HermesiPushOptions` to
+  never download a picture.
+
 ## What it does not do
 
-It does not show notification images (Firebase does that for background notifications; foreground ones show text
-and a tap target), does not draw an inbox, and does not cover iOS. Android only, push only.
+It does not draw an inbox, and it does not cover iOS (see [hermesihq/ios](https://github.com/hermesihq/ios)). Android only,
+push only.
 
 ## Building
 

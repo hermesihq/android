@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -20,7 +21,15 @@ import androidx.core.app.NotificationManagerCompat
  */
 internal object HermesiNotifications {
 
-    fun show(context: Context, options: HermesiPushOptions, content: PushContent, channelId: String?) {
+    /** Test seam: the tests serve pictures from a plain-http local server. */
+    @Volatile
+    internal var imageFetcher: ImageFetcher = ImageFetcher()
+
+    /**
+     * Blocks while it downloads the picture, if there is one, so call it from a background thread: Firebase delivers a
+     * message on one. A picture that cannot be fetched leaves the notification as text.
+     */
+    fun show(context: Context, options: HermesiPushOptions, content: PushContent, channelId: String?, imageUrl: String? = null) {
         // Without the permission the call is silently dropped by the system; skipping it is just honest.
         if (!HermesiPush.notificationsAllowed(context)) return
         val manager = NotificationManagerCompat.from(context)
@@ -34,10 +43,24 @@ internal object HermesiNotifications {
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         tapIntent(context, content, options)?.let { builder.setContentIntent(it) }
+        picture(options, imageUrl)?.let { bitmap ->
+            builder
+                .setLargeIcon(bitmap)
+                .setStyle(
+                    NotificationCompat.BigPictureStyle()
+                        .bigPicture(bitmap)
+                        // The thumbnail is the collapsed form of the same picture; expanded, the picture is the picture.
+                        .bigLargeIcon(null as Bitmap?)
+                        .setSummaryText(content.body),
+                )
+        }
 
         @Suppress("MissingPermission") // checked above through notificationsAllowed
         manager.notify(System.currentTimeMillis().toInt(), builder.build())
     }
+
+    private fun picture(options: HermesiPushOptions, imageUrl: String?): Bitmap? =
+        if (options.showImages && !imageUrl.isNullOrBlank()) imageFetcher.fetch(imageUrl) else null
 
     /**
      * The status bar icon. The app's own icon when the app set none, and a system one when it has no icon either: a
