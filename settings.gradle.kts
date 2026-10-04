@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "hermesi-android"
 include(":hermesi-push")
+include(":sample")

@@ -170,6 +170,22 @@ class HermesiPushAndroidTest {
         assertFalse(HermesiPush.showInForeground(content(), channelId = null))
     }
 
+    @Test
+    fun usesTheAppsIconWhenTheAppSetNone() {
+        app.applicationInfo.icon = 12345
+
+        assertEquals(12345, HermesiNotifications.smallIcon(app, HermesiPushOptions()))
+        assertEquals(777, HermesiNotifications.smallIcon(app, HermesiPushOptions(smallIcon = 777)))
+    }
+
+    @Test
+    fun usesASystemIconWhenTheAppHasNoneAtAll() {
+        // An app with no launcher icon (a sample, a test harness) would otherwise post a notification the system rejects.
+        app.applicationInfo.icon = 0
+
+        assertEquals(android.R.drawable.ic_dialog_info, HermesiNotifications.smallIcon(app, HermesiPushOptions()))
+    }
+
     // --- what a tap opens ---
 
     @Test

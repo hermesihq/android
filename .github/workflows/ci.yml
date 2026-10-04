@@ -25,6 +25,13 @@ jobs:
       # Lint, and the release artifact a consumer would actually depend on: an AAR whose manifest
       # and POM are what get merged into an app.
       - run: ./gradlew :hermesi-push:lintDebug :hermesi-push:assembleRelease
+      # The sample app must keep building against the library it demonstrates (it needs no google-services.json to build).
+      - run: ./gradlew :sample:assembleDebug
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # The token server the sample uses: the format of the subscriber token it mints.
+      - run: node --test "sample/token-server/*.test.mjs"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
