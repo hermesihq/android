@@ -1,0 +1,6 @@
+jdk:
+  - openjdk17
+# JitPack would otherwise run `build`, which includes lint and every test: the CI job does that, and a
+# release should not fail to appear because a test runner is slow on a shared builder.
+install:
+  - ./gradlew :hermesi-push:publishToMavenLocal

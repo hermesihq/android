@@ -19,12 +19,23 @@ Android 6.0 (API 23) and later. Kotlin, with `suspend` functions.
 
 ## Install
 
-The library is not on a public repository yet. Until it is, build it from source
-(`./gradlew :hermesi-push:publishToMavenLocal`) and depend on it from `mavenLocal()`:
+Through [JitPack](https://jitpack.io), which builds a release from its Git tag:
 
 ```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://jitpack.io")
+    }
+}
+```
+
+```kotlin
+// app/build.gradle.kts
 dependencies {
-    implementation("io.github.hermesihq:hermesi-push:0.1.0")
+    implementation("com.github.hermesihq.android:hermesi-push:0.1.0")
 }
 ```
 
